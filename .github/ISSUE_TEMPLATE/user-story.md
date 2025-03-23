@@ -1,5 +1,5 @@
 ---
-name: User Storu
+name: User Story
 about: Template defines user' stories
 title: ''
 labels: ''
