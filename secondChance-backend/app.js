@@ -3,9 +3,10 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const pinoLogger = require('./logger');
-
+const path = require('path');
 const connectToDatabase = require('./models/db');
 const {loadData} = require("./util/import-mongo/index");
+const MongoClient = require('mongodb').MongoClient;
 
 
 const app = express();
@@ -21,7 +22,21 @@ connectToDatabase().then(() => {
 
 app.use(express.json());
 
+
 // Route files
+const secondChanceItemsRoutes = require('./routes/secondChanceItemsRoutes');
+const searchRoutes = require('./routes/searchRoutes');
+const pinoHttp = require('pino-http');
+const logger = require('./logger');
+
+
+// Routes
+app.use(pinoHttp({ logger }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/api/secondchance/items', secondChanceItemsRoutes);
+app.use("/api/secondchance/search", searchRoutes);
+
 
 // authRoutes Step 2: import the authRoutes and store in a constant called authRoutes
 //{{insert code here}}
@@ -33,10 +48,9 @@ app.use(express.json());
 //{{insert code here}}
 
 
-const pinoHttp = require('pino-http');
-const logger = require('./logger');
 
-app.use(pinoHttp({ logger }));
+
+
 
 // Use Routes
 // authRoutes Step 2: add the authRoutes and to the server by using the app.use() method.
