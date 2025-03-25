@@ -3,9 +3,8 @@ const express = require('express')
 const cors = require('cors')
 const pinoLogger = require('./logger')
 const path = require('path')
-const connectToDatabase = require('./models/db')
 const {loadData} = require('./util/import-mongo/index')
-const MongoClient = require('mongodb').MongoClient
+const connectToDatabase = require('./models/db')
 
 const app = express()
 app.use('*', cors())
