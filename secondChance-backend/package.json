@@ -3,11 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "mocha",
-    "start": "node app.js",
-    "dev": "nodemon app.js"
-  },
+ cd
   "keywords": [],
   "author": "",
   "license": "ISC",
