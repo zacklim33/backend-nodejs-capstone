@@ -5,7 +5,7 @@ const connectToDatabase = require('../models/db');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const logger = require('../logger');
+const logger = require('pino');
 
 const {body, validationResult} = require('express-validator');
 
@@ -65,8 +65,6 @@ router.post('/login', async (req, res) => {
     try {
         // Task 1: Connect to `secondChance` in MongoDB through `connectToDatabase` in `db.js`.
         const db = await connectToDatabase();
-        
-        console.log('[DEBUG] JWT_SECRET:', process.env.JWT_SECRET); // Add this in authRoutes.js
 
         // Task 2: Access MongoDB `users` collection
         const collection = await db.collection("users");

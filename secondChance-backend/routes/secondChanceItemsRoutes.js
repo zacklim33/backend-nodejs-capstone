@@ -70,23 +70,26 @@ router.post('/', upload.single('file'), async(req, res,next) => {
         const last2ndChanceItems = await collection
            .find({})
            .sort({id:-1}) //sort by elements
-           .limit(1);     
+           .limit(1)
+           .toArray();     
 
         //assign id to new item
-        new2ndChanceItem.id = (parseInt(last2ndChanceItems.id)+1).toString();
+        new2ndChanceItem.id = (parseInt(last2ndChanceItems[0].id)+1).toString();
 
         //Step 3: task 5 - set date to new item, in seconds
         new2ndChanceItem.date_added = parseInt(Math.floor(Date.now() / 1000) ) ;         
 
         //Step 3: task 6 - upload image into images directory
         if (req.file) {
+            new2ndChanceItem.image=`/images/${req.file.originalname}`;
+            /* Old definiton of image
             new2ndChanceItem.image = {
                 filename: req.file.originalname,
                 path: path.join(directoryPath, req.file.originalname),
                 mimetype: req.file.mimetype,
                 size: req.file.size,
                 uploadDate: new Date()
-            };
+            };*/
         } else {
             // Optional: Handle case where no file was uploaded
             logger.info('No file uploaded with the request');
@@ -94,13 +97,14 @@ router.post('/', upload.single('file'), async(req, res,next) => {
 
 
         //Step 3: task 7 - add new item into database
-        new2ndChanceItem = await collection.insertOne(new2ndChanceItem);        
+        const addResult = await collection.insertOne(new2ndChanceItem);        
 
         //return 201 HTTP code for successful operations
-        res.status(201).json(new2ndChanceItem.ops[0]);
-
+        res.status(201).json(addResult.insertedId);
+        //TypeError: Cannot read properties of undefined (reading '0')
 
     } catch (e) {
+        logger.error(e.message);
         next(e);
     }
 });
@@ -124,7 +128,7 @@ router.get('/:id', async (req, res, next) => {
         if (!specificItem) {
             return res.status(404).send("No item found");
         } else{
-            res.json(specificItem);
+            return res.json(specificItem);
         }
 
 
