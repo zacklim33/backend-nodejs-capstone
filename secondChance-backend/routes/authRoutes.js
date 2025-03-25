@@ -5,8 +5,8 @@ const connectToDatabase = require('../models/db')
 const bcrypt = require('bcrypt')
 const router = express.Router()
 const jwt = require('jsonwebtoken')
-const logger = require('pino')
-const { validationResult } = require('express-validator')
+const logger = require('../logger')
+const { body, validationResult } = require('express-validator')
 
 const JWT_SECRET = process.env.JWT_SECRET
 
@@ -21,7 +21,7 @@ router.post('/register', async (req, res) => {
     // Task 3: Check if user credentials already exists in the database and throw an error if they do
     const query = req.body
     const user = await collection.findOne({ email: query.email })
-    if (user) logger.ERROR('Email already exists in DB')
+    if (user) logger.error('Email already exists in DB')
 
     // Task 4: Create a hash to encrypt the password so that it is not readable in the database
     const salt = await bcrypt.genSalt(10)
@@ -46,6 +46,8 @@ router.post('/register', async (req, res) => {
     // Task 8: Return the user email and the token as a JSON
     res.json({ authtoken, email: req.body.email })
   } catch (e) {
+
+    logger.error("Registeration Error ",e);
     return res.status(500).send('Internal server error')
   }
 })
